@@ -11,7 +11,7 @@ namespace Duality_
     {
         private Tilemap         TilemapInScene         => this.GameObj.ParentScene.FindComponent<Tilemap> ();
         private TilemapRenderer TilemapRendererInScene => this.GameObj.ParentScene.FindComponent<TilemapRenderer>();
-        private Transform       MainCameraTransform    => this.GameObj.ParentScene.FindComponent<Camera> ()?.GameObj.Transform;
+        private Camera          MainCamera             => this.GameObj.ParentScene.FindComponent<Camera> ();
 
         void ICmpUpdatable.OnUpdate ()
         {
@@ -21,11 +21,11 @@ namespace Duality_
 
         private Vector2 GetWorldCoordOfMouse ()
         {
-            Vector2 mouseScreenPos = DualityApp.Mouse.Pos;
-            Vector2 screenCenter   = DualityApp.TargetResolution / 2;
-            Vector3 cameraPos      = MainCameraTransform?.Pos ?? Vector3.Zero;
+            if (MainCamera == null)
+                return Vector2.Zero;
 
-            return mouseScreenPos - screenCenter + cameraPos.Xy;
+            Vector2 mouseScreenPos = DualityApp.Mouse.Pos;
+            return MainCamera.GetSpaceCoord (mouseScreenPos).Xy;
         }
 
         private void ChangeTilemap (Vector2 worldPos)
